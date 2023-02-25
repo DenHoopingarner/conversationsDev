@@ -11,7 +11,7 @@ session_start();
      <link rel="stylesheet" href="res/fontawesome/css/all.min.css">
      <link rel="stylesheet" href="css/main.css">
      <script src="js/index.js"></script>
-     <title>Document</title>
+     <title>Conversations</title>
 </head>
 
 <body>
