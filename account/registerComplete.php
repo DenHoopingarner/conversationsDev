@@ -12,8 +12,12 @@ session_start();
 </head>
 
 <body>
-     Registration was successful. Check your email for a verification link. Click that link to complete your registration.
-
+<p>
+          Registration was successful. 
+     Check your email for a verification link. 
+     Click that link to complete your registration.
+</p>
+<p><a href="../">Home</a></p>
 </body>
 
 </html>

@@ -11,10 +11,10 @@ switch ($urlArray[0]) {
                 include_once ('login.php');
                 break;
             case 'register' :
-                echo "you're trying to register";
+                include_once ('register.php');
                 break;
             case 'forgotpw' :
-                echo "you forgot your password";
+                include_once ('forgotPW.php');
                 break;
             default :
                 echo 'fatal error';
