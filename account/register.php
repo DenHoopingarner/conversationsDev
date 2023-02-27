@@ -4,10 +4,10 @@
      <meta charset="UTF-8">
      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, maximum-scale=1">
      <title>Den's Document</title>
-     <link rel="stylesheet" href="css/main.css">
-     <link rel="stylesheet" href="css/register.css">
-     <link rel="stylesheet" href="res/fontawesome/css/all.min.css">
-     <script src="js/register.js"></script>
+     <link rel="stylesheet" href="/css/main.css">
+     <link rel="stylesheet" href="/css/register.css">
+     <link rel="stylesheet" href="/res/fontawesome/css/all.min.css">
+     <script src="/js/register.js"></script>
 </head>
 
 <body>

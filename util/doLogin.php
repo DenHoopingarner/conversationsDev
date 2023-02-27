@@ -9,6 +9,7 @@ try {
      $varEmail = $_POST["email"];
      $varPW = $_POST["password"];
      $varLoginDate = date("Y-m-d h:i:s");
+     $varLoginIP =  $_SERVER['REMOTE_ADDR'];
 
      $dbh = new PDO($dsn, $username, $password);
 

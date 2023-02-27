@@ -34,13 +34,13 @@ session_start();
      <h4 class="h4">
           <i class="fa fa-question-circle"></i> Forgot your password?
           <br />
-          <a href='forgotPW.php'>Reset it here</a>.
+          <a href='./forgotpw'>Reset it here</a>.
      </h4>
      <h4 class="h4">
           <i class="fa fa-user-plus"></i>
           No account? No problem!
           <br />
-          <a href='register.php'>Register here</a>.
+          <a href='./register'>Register here</a>.
      </h4>
 </body>
 
