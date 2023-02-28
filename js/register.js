@@ -155,6 +155,6 @@ window.addEventListener('load', () => {
 
   cancelBtn.addEventListener('click', () => {
     // console.log('cancel')
-    document.location.href = './';
+    document.location.href = '../../';
   });
 });

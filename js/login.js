@@ -82,12 +82,16 @@ window.addEventListener('load', () => {
     const myres = await q.json();
     if (myres.res == 'success') {
       // user ID
-      console.log(myres.userID);
-      console.log(myres.fullname);
-      console.log('rows: ' + myres.rowCount);
-      document.location.href = '../../app/';
+      // console.log(myres.userID);
+      // console.log(myres.fullname);
+      // console.log('rows: ' + myres.rowCount);
+      document.location.href = '../../app/loginSuccess';
     } else {
-      if (myres.res == 'errEmail') showError(email, myres.msg);
+      if (myres.res == 'errEmail') {
+        showError(email, myres.msg);
+        // password.parentElement.classList.remove('form-control.success');
+        password.parentElement.className = 'form-control';
+      }
       if (myres.res == 'errPW') showError(password, myres.msg);
       password.value = '';
     }
@@ -102,6 +106,6 @@ window.addEventListener('load', () => {
 
   cancelBtn.addEventListener('click', () => {
     console.log('cancel');
-    document.location.href = './';
+    document.location.href = '../../';
   });
 });
