@@ -16,6 +16,9 @@ switch ($urlArray[0]) {
             case 'forgotpw' :
                 include_once ('forgotPW.php');
                 break;
+            case 'verifyAccount' :
+                include_once ('verifyAccount.php');
+                break;
             default :
                 echo 'fatal error';
         }

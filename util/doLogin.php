@@ -14,7 +14,7 @@ try {
      $dbh = new PDO($dsn, $username, $password);
 
      // Is the email address already in the database?
-     $sql = 'SELECT id, pw, fullname FROM users WHERE email = :varEmail';
+     $sql = 'SELECT id, pw, fullname, active FROM users WHERE email = :varEmail';
      $stmt = $dbh->prepare($sql);
      $stmt->bindValue(':varEmail', $varEmail, PDO::PARAM_STR);
      $stmt->execute();
@@ -23,22 +23,31 @@ try {
      if (count($rows) == 1) {
           // now check to see if the password matches
           if (password_verify($varPW, $rows[0]['pw'])) {
-               $_SESSION["userID"] = $rows[0]["id"];
-               $_SESSION["fullname"] = $rows[0]["fullname"];
-               $myRes['res'] = 'success';
 
-               $myRes['userID'] = $rows[0]["id"];
-               $myRes["fullname"] = $rows[0]["fullname"];
+               // is the user active？
+               if($rows[0]['active'] == 'Y'){
+                    $_SESSION["userID"] = $rows[0]["id"];
+                    $_SESSION["fullname"] = $rows[0]["fullname"];
+                    $myRes['res'] = 'success';
 
-               $myRes['rowCount'] = count($rows);
+                    $myRes['userID'] = $rows[0]["id"];
+                    $myRes["fullname"] = $rows[0]["fullname"];
 
-               // log this login into the loginTracker
-               $sql = "INSERT INTO loginTracker (userID,loginDate, loginIP) VALUES (:varID, :varLoginDate, :varLoginIP )";
-               $stmt = $dbh->prepare($sql);
-               $stmt->bindValue(':varID', $rows[0]["id"]);
-               $stmt->bindValue(':varLoginIP', $varLoginIP);
-               $stmt->bindValue(':varLoginDate', $varLoginDate);
-               $stmt->execute();
+                    $myRes['rowCount'] = count($rows);
+
+                    // log this login into the loginTracker
+                    $sql = "INSERT INTO loginTracker (userID,loginDate, loginIP) VALUES (:varID, :varLoginDate, :varLoginIP )";
+                    $stmt = $dbh->prepare($sql);
+                    $stmt->bindValue(':varID', $rows[0]["id"]);
+                    $stmt->bindValue(':varLoginIP', $varLoginIP);
+                    $stmt->bindValue(':varLoginDate', $varLoginDate);
+                    $stmt->execute();
+               } else {
+                    // User is not active.  Kick an error message
+                    $myRes['res'] = 'errNotActive';
+                    $myRes['msg'] = 'You have not yet activated your account';
+               }
+
           } else {
                $myRes['res'] = 'errPW';
                $myRes['msg'] = 'Password incorrect';
