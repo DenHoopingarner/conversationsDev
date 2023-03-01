@@ -93,6 +93,13 @@ window.addEventListener('load', () => {
         password.parentElement.className = 'form-control';
       }
       if (myres.res == 'errPW') showError(password, myres.msg);
+      if (myres.res == 'errNotActive') {
+        email.parentElement.className = 'form-control';
+        password.parentElement.className = 'form-control';
+        email.value = '';
+        password.value = '';
+        console.log(myres.msg);
+      }
       password.value = '';
     }
   }

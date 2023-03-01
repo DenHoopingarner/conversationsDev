@@ -13,7 +13,7 @@ session_start();
 
 <body>
 <p>
-          Registration was successful. 
+     Registration was successful. 
      Check your email for a verification link. 
      Click that link to complete your registration.
 </p>
