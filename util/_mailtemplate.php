@@ -9,18 +9,17 @@ require '../PHPMailer/src/Exception.php';
 require '../PHPMailer/src/PHPMailer.php';
 require '../PHPMailer/src/SMTP.php';
 
-/*
-$emailTo = 'denniehoopingarner@icloud.com';
-$emailName = 'Den the Man';
-$emailSubject = 'A cheezy email subject line';
-$emailSuccessMsg = 'email sent successfully';
-$emailFailMsg = 'email sent successfully';
+// $emailTo = 'denniehoopingarner@icloud.com';
+// $emailName = 'Den the Man';
+// $emailSubject = 'A cheezy email subject line';
+// $emailSuccessMsg = 'email sent successfully';
+// $emailFailMsg = 'email sent successfully';
+// $emailFrom = 'Conversations Email System';
 
-$emailBody = '
-<h1>Hi.</h1>
-<h3>This is an email</h3>
-';
-*/
+// $emailBody = '
+// <h1>Hi.</h1>
+// <h3>This is an email</h3>
+// ';
 
 // global $fname, $lname, $resetKey, $emailaddress;
 
@@ -63,8 +62,10 @@ try {
      $mail->send();
      $myRes['res'] = 'success';
      $myRes['msg'] = $emailSuccessMsg;
+
 } catch (Exception $e) {
 
      echo $emailFailMsg;
      echo $mail->ErrorInfo;
+
 }

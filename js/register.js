@@ -123,7 +123,12 @@ window.addEventListener('load', () => {
       document.location.href = 'verifyRegister.php';
     } else {
       wait.style.display = 'none';
-      if (myres.res == 'errEmail') showError(email, myres.msg);
+      if (myres.res == 'errEmail') {
+        showError(email, myres.msg);
+      }
+      if (myres.res == 'errEmailSend') {
+        console.log('can not send the email');
+      }
     }
   }
 

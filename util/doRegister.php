@@ -1,5 +1,8 @@
 <?php
 
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
 $activeDate =  date("l, M d, Y");
 
 header('Content-Type: application/json');
@@ -8,14 +11,18 @@ try {
      // Connect to the database
      require_once 'dbconfig.php';
 
-     $varID = getGUID();
-     $varFullName = $_POST["fullname"];
-     $varEmail = $_POST["email"];
-     $varPW = $_POST["password"];
+     $varID = guidv4();
+     // $varFullName = $_POST["fullname"];
+     // $varEmail = $_POST["email"];
+     // $varPW = $_POST["password"];
+     $varFullName = "Den Test17";
+     $varEmail = 'test17@test.com';
+     $varPW = 'test';
+
 
      $varPW = password_hash($varPW, PASSWORD_BCRYPT);
      $varCreateDate = date("Y-m-d h:i:s");
-     $varCode = getGUID();
+     $varCode = guidv4();
 
      $dbh = new PDO($dsn, $username, $password);
 
@@ -42,57 +49,89 @@ try {
           $stmt->bindValue(':varActive', 'N');
           $stmt->execute();
 
-          // Send confirmation email
-          $emailTo = $varEmail;
-          $emailName = $varFullName;
-          $emailSubject = 'Verify your Conversations registration';
-          $emailSuccessMsg = 'email sent successfully';
-          $emailFailMsg = 'email sent successfully';
-          $emailFrom = 'An Email System';
+          try {
+               // Send confirmation email
+               $emailTo = $varEmail;
+               $emailName = $varFullName;
+               $emailSubject = 'Verify your Conversations registration';
+               $emailSuccessMsg = 'email sent successfully';
+               $emailFailMsg = 'email sent successfully';
+               $emailFrom = 'Conversations Email System';
 
-          $emailBody =
-               "
-          <h3>Thanks for registering with Conversations.</h3>
+               $emailBody =
+                    "
+               <h3>Thanks for registering with Conversations.</h3>
 
-          <p>Hello, $varFullName.  You must activate your account before you can log in.</p>
-          <p><a href='http://conversations.denniehoopingarner.com/activateAccount.php?z=" . $varCode . "'>Click here to activate</a>.</p>
-          ";
-          require_once('_mailtemplate.php');
+               <p>Hello, $varFullName.  You must activate your account before you can log in.</p>
+               <p><a href='http://conversations.denniehoopingarner.com/activateAccount.php?z=" . $varCode . "'>Click here to activate</a>.</p>
+               ";
+               // require_once('../util/_mailtemplate.php') or die ('errEmailTemplate');
+
+
+
+               require '../PHPMailer/src/Exception.php';
+               require '../PHPMailer/src/PHPMailer.php';
+               require '../PHPMailer/src/SMTP.php';
+
+               $mail = new PHPMailer(true);                                        // Passing `true` enables exceptions
+               try {
+
+                    //Server settings
+                    $mail->SMTPDebug = 0;                                            // Enable verbose debug output
+                    $mail->isSMTP();                                                 // Set mailer to use SMTP
+                    $mail->Host = 'smtp.dreamhost.com';                              // Specify main and backup SMTP servers
+                    $mail->SMTPAuth = true;                                          // Enable SMTP authentication
+                    $mail->Username = 'login@denniehoopingarner.com';                // SMTP username
+                    $mail->Password = '1966 was a cheesy year';                      // SMTP password
+                    $mail->SMTPSecure = 'ssl';                                       // Enable SSL encryption, TLS also accepted with port 465
+                    $mail->Port = 465;                                               // TCP port to connect to
+
+                    //Recipients
+                    $mail->setFrom('login@denniehoopingarner.com', $emailFrom);          //This is the email your form sends From
+                    $mail->addAddress("$emailTo", "$emailName");      // Add a recipient address
+
+                    //Content
+                    $mail->isHTML(true);                                  // Set email format to HTML
+                    $mail->Subject = $emailSubject;
+                    $mail->Body    =  $emailBody;
+                    //$mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
+
+                    $mail->send();
+                    $myRes['res'] = 'success';
+                    $myRes['msg'] = $emailSuccessMsg;
+               } catch (Exception $e) {
+
+                    echo $emailFailMsg;
+                    echo $mail->ErrorInfo;
+               }
+          } catch (Exception $e) {
+               // Code that handles the exception
+               $myRes['res'] = 'errEmailSend';
+               // $myRes['msg'] = $e->getMessage();
+               $myRes['msg'] = 'can not send the email';
+          }
      }
      // Close the connection
      $dbh = null;
 } catch (PDOException $e) {
-     $myRes['err'] = 'errDB';
+     $myRes['res'] = 'errDB';
      $myRes['msg'] = $e->getMessage() . $varFullname;
 }
 
 $myJSON = json_encode($myRes);
 echo $myJSON;
 
-
-function getGUID()
+function guidv4()
 {
-     if (function_exists('com_create_guid')) {
-          return '44' . com_create_guid();
-     } else {
-          mt_srand((float)microtime() * 10000); //optional for php 4.2.0 and up.
-          $charid = strtoupper(md5(uniqid(rand(), true)));
-          $hyphen = chr(45); // "-"
-          $uuid = chr(123) // "{"
-               . substr($charid, 0, 8) . $hyphen
-               . substr($charid, 8, 4) . $hyphen
-               . substr($charid, 12, 4) . $hyphen
-               . substr($charid, 16, 4) . $hyphen
-               . substr($charid, 20, 12)
-               . chr(125); // "}"
-          //return $uuid;
-          $uuid =
-               substr($charid, 0, 8) . $hyphen
-               . substr($charid, 8, 4) . $hyphen
-               . substr($charid, 12, 4) . $hyphen
-               . substr($charid, 16, 4) . $hyphen
-               . substr($charid, 20, 12);
+     // Generate 16 bytes (128 bits) of random data or use your own implementation here
+     $data = random_bytes(16);
 
-          return $uuid;
-     }
+     // Set the version to 0100
+     $data[6] = chr(ord($data[6]) & 0x0f | 0x40);
+
+     // Set the variant to 10
+     $data[8] = chr(ord($data[8]) & 0x3f | 0x80);
+
+     // Output the GUID in the format {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}
+     return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
 }
