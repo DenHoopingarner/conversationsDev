@@ -12,12 +12,12 @@ try {
      require_once 'dbconfig.php';
 
      $varID = guidv4();
-     // $varFullName = $_POST["fullname"];
-     // $varEmail = $_POST["email"];
-     // $varPW = $_POST["password"];
-     $varFullName = "Den Test17";
-     $varEmail = 'test17@test.com';
-     $varPW = 'test';
+     $varFullName = $_POST["fullname"];
+     $varEmail = $_POST["email"];
+     $varPW = $_POST["password"];
+     // $varFullName = 'Den State';
+     // $varEmail = 'hoopingarnerds@state.gov';
+     // $varPW = 'test';
 
 
      $varPW = password_hash($varPW, PASSWORD_BCRYPT);
@@ -54,8 +54,8 @@ try {
                $emailTo = $varEmail;
                $emailName = $varFullName;
                $emailSubject = 'Verify your Conversations registration';
-               $emailSuccessMsg = 'email sent successfully';
-               $emailFailMsg = 'email sent successfully';
+               $emailSuccessMsg = 'email sent successfully to ' . $varEmail;
+               $emailFailMsg = 'email failed';
                $emailFrom = 'Conversations Email System';
 
                $emailBody =
@@ -120,6 +120,7 @@ try {
 
 $myJSON = json_encode($myRes);
 echo $myJSON;
+
 
 function guidv4()
 {
