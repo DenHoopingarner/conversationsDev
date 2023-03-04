@@ -120,7 +120,8 @@ window.addEventListener('load', () => {
     if (myres.res == 'success') {
       // user ID
       // console.log(myres.userID);
-      document.location.href = 'verifyRegister.php';
+      // document.location.href = 'verifyRegister.php';
+      document.location.href = '/account/account/registerComplete';
     } else {
       wait.style.display = 'none';
       if (myres.res == 'errEmail') {
