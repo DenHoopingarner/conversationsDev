@@ -1,0 +1,138 @@
+<?
+// Import PHPMailer classes into the global namespace
+// These must be at the top of your script, not inside a function
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+require '/home/dh_966akv/PHPMailer/src/Exception.php';
+require '/home/dh_966akv/PHPMailer/src/PHPMailer.php';
+require '/home/dh_966akv/PHPMailer/src/SMTP.php';
+
+?>
+
+<?
+	
+require 'db.php';
+
+// Create connection
+$conn = new mysqli($dbservername, $dbusername, $dbpassword, $dbname);
+mysqli_set_charset($conn,"utf8");
+
+// Check connection
+if ($conn->connect_error) {
+	die("Connection failed: " . $conn->connect_error);
+}
+
+
+// prepare and bind
+$stmt = $conn->prepare("INSERT INTO users (emailaddress, fname, lname, password, resetKey, accountType, isActive, activeDate) VALUES (?, ?,?,?,?,?,?, now())");
+$stmt->bind_param("sssssss", $emailaddress, $fname, $lname, $password, $resetKey, $accountType, $isActive);
+
+
+$emailaddress = $_POST["username"];
+$fname = $_POST["fname"];
+$lname = $_POST["lname"];
+$password = $_POST["password"];
+$resetKey = getGUID();
+$accountType = "s";
+$isActive = "N";
+$activeDate =  time();
+//$date = date('m/d/Y h:i:s', time());
+
+// Store the string into variable
+// Use password_hash() function to
+// create a password hash
+$hash_default_salt = password_hash($password, PASSWORD_DEFAULT);
+
+$password = $hash_default_salt;
+
+$stmt->execute();
+$conn->close();
+
+sendConfirmationEmail();
+
+//echo "Data Entered.  Dennie is King! \n$password \n $resetKey";
+
+
+function getGUID(){
+	if (function_exists('com_create_guid')){
+		return '44' . com_create_guid();
+	} else {
+		mt_srand((double)microtime()*10000);//optional for php 4.2.0 and up.
+		$charid = strtoupper(md5(uniqid(rand(), true)));
+		$hyphen = chr(45);// "-"
+		$uuid = chr(123)// "{"
+			.substr($charid, 0, 8).$hyphen
+			.substr($charid, 8, 4).$hyphen
+			.substr($charid,12, 4).$hyphen
+			.substr($charid,16, 4).$hyphen
+			.substr($charid,20,12)
+			.chr(125);// "}"
+		//return $uuid;
+		$uuid = 
+			substr($charid, 0, 8).$hyphen
+			.substr($charid, 8, 4).$hyphen
+			.substr($charid,12, 4).$hyphen
+			.substr($charid,16, 4).$hyphen
+			.substr($charid,20,12);
+
+		return $uuid;
+	}
+}
+
+function sendConfirmationEmail(){
+	global $fname, $lname, $resetKey, $emailaddress;
+	
+	$ConfirmationEmailBody = "
+	
+	<p>Hello, $fname $lname.  Your account was created successfully.</p>
+	<p>
+	Before you can use it, though, you have to verify your email address.  <br />
+	Please go to this website <a href='https://cordova.denniehoopingarner.com/verify.php'>https://cordova.denniehoopingarner.com/verify.php</a> and log in with this verification key: $resetKey.
+	</p>
+	<p>
+	If you did not create an account, know that all we received was your name and your email address, no other personal information.  <br />
+	Click this link <a href='https://cordova.denniehoopingarner.com/freeze.php'>https://cordova.denniehoopingarner.com/freeze.php</a> 
+	to delete this account error, and protect your email address from further abuse on our system.
+	</p>
+	
+	";
+	
+	$mail = new PHPMailer(true);								// Passing `true` enables exceptions
+	try {
+
+    //Server settings
+    $mail->SMTPDebug = 0;									// Enable verbose debug output
+    $mail->isSMTP();										// Set mailer to use SMTP
+    $mail->Host = 'smtp.dreamhost.com';						// Specify main and backup SMTP servers
+    $mail->SMTPAuth = true;									// Enable SMTP authentication
+    $mail->Username = 'login@denniehoopingarner.com';		// SMTP username
+    $mail->Password = '1966 was a cheesy year';				// SMTP password
+    $mail->SMTPSecure = 'ssl';								// Enable SSL encryption, TLS also accepted with port 465
+    $mail->Port = 465;										// TCP port to connect to
+
+    //Recipients
+    $mail->setFrom('login@denniehoopingarner.com', 'Login System');		//This is the email your form sends From
+    $mail->addAddress("$emailaddress", "$fname $lname"); 	// Add a recipient address
+
+    //Content
+    $mail->isHTML(true);                                  // Set email format to HTML
+    $mail->Subject = 'Registration successful. Verify your account to continue.';
+    $mail->Body    =  $ConfirmationEmailBody;
+    //$mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
+
+    $mail->send();
+    echo 'Registration was successful. Check your inbox for a confirmation email You must verify your email in order to continue.';
+
+	} catch (Exception $e) {
+
+	    echo 'Message could not be sent.';
+		echo 'Mailer Error: ' . $mail->ErrorInfo;
+    
+	}
+	
+}
+
+
+
+?>

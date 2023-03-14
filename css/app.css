@@ -1,0 +1,23 @@
+* {
+     box-sizing: border-box;
+}
+
+body {
+     display: flex;
+     flex-direction: column;
+     justify-content: center;
+     align-items: center;
+     height: 100vh;
+     background-color: antiquewhite;
+     font-family: Verdana, Geneva, Tahoma, sans-serif;
+     color: green;
+}
+
+h4 {
+     color: brown;
+}
+
+h4 a {
+     color: brown;
+     text-decoration: none;
+}
